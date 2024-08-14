@@ -1,5 +1,15 @@
 import time
 
+# {
+#     srtv: 0 # default 
+#     cv: 0 # exhaust off 
+#     cv: 1 # exhaust on
+#     supply: 33 # ch 1   # use as low 
+#     supply: 66 # ch 2   # use as high
+#     supply: 100 # ch 3
+# }
+
+
 class WellBreath:
     def __init__(self, 
             temp, 
@@ -38,24 +48,24 @@ class WellBreath:
     def func_wellbreath(self):
         self.__func_logging(is_func="logic", action=["temp: "+ str(self.temp), "humid: "+ str(self.humid), "co2: "+ str(self.co2)])
         if self.co2 >= self.thres_co2_mor_than and self.temp < self.thres_temp_mor_than and self.humid < self.thres_humid_mor_than:
-            command = self.__func_create_command(action="on", array_command=[self.set_exhaust_name, self.thres_temp_lower_than])
+            command = self.__func_create_command(state_off_on=True, array_command=[self.set_exhaust_name, self.thres_temp_lower_than])
             self.__func_logging(is_func="cmd", action=command)
             return command["srtv"], command["cv"], command["supply"]
         elif self.co2 >= self.thres_co2_mor_than and (self.temp >= self.thres_temp_mor_than or self.humid >= self.thres_humid_mor_than):
-            command = self.__func_create_command(action="on",array_command= [self.set_exhaust_name, self.set_supply_high_name])
+            command = self.__func_create_command(state_off_on=True,array_command= [self.set_exhaust_name, self.set_supply_high_name])
             self.__func_logging(is_func="cmd", action=command)
             return command["srtv"], command["cv"], command["supply"]
         elif self.co2 < self.thres_co2_low_than and (self.temp >= self.thres_temp_mor_than or self.humid >= self.thres_humid_low_than):
-            command = self.__func_create_command(action="on",array_command= [self.set_exhaust_name, self.set_supply_high_name])
+            command = self.__func_create_command(state_off_on=True,array_command= [self.set_exhaust_name, self.set_supply_high_name])
             self.__func_logging(is_func="cmd", action=command)
             return command["srtv"], command["cv"], command["supply"]
         elif self.co2 < self.thres_co2_low_than and self.temp < self.thres_temp_lower_than and self.humid < self.thres_humid_low_than:
-            command = self.__func_create_command(action="off", array_command=[])
+            command = self.__func_create_command(state_off_on=False, array_command=[])
             self.__func_logging(is_func="cmd", action=command)
             return command["srtv"], command["cv"], command["supply"]
 
-    def __func_create_command(self,action, array_command):
-        if action == "on":
+    def __func_create_command(self,state_off_on, array_command):
+        if state_off_on:
             if self.set_exhaust_name in array_command and self.set_supply_low_name in array_command:
                 return {
                     "srtv":float(0), # default 
@@ -69,7 +79,7 @@ class WellBreath:
                     "cv": float(1), # exhaust fan
                     "supply": float(self.set_channel_cv_supply_high), # supply fan
                 }
-        elif action == "off":
+        else:
             return {
                     "srtv": float(0), # default 
                     "cv": float(0), # exhaust fan
