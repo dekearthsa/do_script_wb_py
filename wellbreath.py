@@ -2,22 +2,22 @@ import time
 
 class WellBreath:
     def __init__(self, 
-                 temp, 
-                 humid, 
-                 co2,
-                 debug = False, ## default logging is False // not show log
-                 thres_co2_mor_than = 1000,
-                 thres_co2_low_than = 750,
-                 thres_temp_mor_than = 35,
-                 thres_temp_lower_than = 30,
-                 thres_humid_mor_than = 75,
-                 thres_humid_low_than = 70,
-                 set_exhaust_name = "exhaust_fan", ## set exhaust name 
-                 set_supply_low_name = "supply_low", ## set supply fan low name 
-                 set_supply_high_name = "supply_high", ## set supply fan high name
-                 set_channel_cv_supply_low = 33, ## using channel 1 as supply low 
-                 set_channel_cv_supply_high = 66 ## using channel 2 as supply high
-                 ):
+            temp, 
+            humid, 
+            co2,
+            debug = False, ## default logging is False // not show log
+            thres_co2_mor_than = 1000,
+            thres_co2_low_than = 750,
+            thres_temp_mor_than = 35,
+            thres_temp_lower_than = 30,
+            thres_humid_mor_than = 75,
+            thres_humid_low_than = 70,
+            set_exhaust_name = "exhaust_fan", ## set exhaust name 
+            set_supply_low_name = "supply_low", ## set supply fan low name 
+            set_supply_high_name = "supply_high", ## set supply fan high name
+            set_channel_cv_supply_low = 33, ## using channel 1 as supply low 
+            set_channel_cv_supply_high = 66 ## using channel 2 as supply high
+        ):
         
         self.temp = temp
         self.humid = humid
@@ -85,22 +85,21 @@ class WellBreath:
             if is_func == "cmd":
                 print(formatted_time + " " + "srtv: " + str(action["srtv"]) + " cv: " + str(action["cv"]) + " supply: " + str(action["supply"]))
             elif is_func == "logic":
-                # Convert list to a string using join or simply use str()
                 action_str = ", ".join(action)
                 print(formatted_time + " " + action_str)
 
 
 
-example = WellBreath(
-    temp=55,
-    humid=55,
-    co2=400, 
-    debug=True ## Close debug using False 
-    )
+# example = WellBreath(
+#     temp=55,
+#     humid=55,
+#     co2=400, 
+#     debug=True ## Close debug using False 
+#     )
 
 
-t, h, c = example.func_wellbreath()
+# t, h, c = example.func_wellbreath()
 
-print(t)
-print(h)
-print(c)
+# print(t)
+# print(h)
+# print(c)

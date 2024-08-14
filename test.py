@@ -1,7 +1,11 @@
-import time 
+import wellbreath
 
+set_func_wellbreath = wellbreath.WellBreath(
+    temp= 37, 
+    humid=55, 
+    co2=500, 
+    debug=True
+    )
 
-current_time = time.time()
-local_time = time.localtime(current_time)
-formatted_time = time.strftime("%d/%m/%Y %H:%M:%S", local_time)
-print(formatted_time)
+strv, cv, supply = set_func_wellbreath.func_wellbreath()
+print("str: "+ str(strv) + " " + "cv: "+ str(cv) + " " + "supply: " + str(supply))
