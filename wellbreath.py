@@ -58,9 +58,9 @@ class WellBreath:
             set_range_val_humid=range(0, 101)  # range type 0 - 100 %RH
         ):
         
-        self.temp = temp
-        self.humid = humid
-        self.co2 = co2
+        self.temp = temp["sc_indoor"]
+        self.humid = humid["sc_indoor"]
+        self.co2 = co2["sc_indoor"]
         self.debug = debug
         self.thres_co2_mor_than = thres_co2_mor_than
         self.thres_co2_low_than = thres_co2_low_than
