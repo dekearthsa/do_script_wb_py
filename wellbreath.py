@@ -119,16 +119,21 @@ class WellBreath:
         if not self.debug:
             return
         
+        co2_range_str = f"{self.set_range_val_co2.start}-{self.set_range_val_co2.stop-1}"
+        temp_range_str = f"{self.set_range_val_temp.start}-{self.set_range_val_temp.stop-1}"
+        humid_range_str = f"{self.set_range_val_humid.start}-{self.set_range_val_humid.stop-1}"    
         current_time = time.strftime("%d/%m/%Y %H:%M:%S", time.localtime())
-        
+        print(current_time + " " +"Theshold co2 more than: ", self.thres_co2_mor_than)
+        print(current_time + " " +"Theshold co2 lower than: ", self.thres_co2_low_than)
+        print(current_time + " " +"Theshold temp more than: ", self.thres_temp_mor_than)
+        print(current_time + " " +"Theshold temp lower than: ", self.thres_temp_lower_than)
+        print(current_time + " " +"Theshold humid more than: ", self.thres_humid_mor_than)
+        print(current_time + " " +"Theshold humid lower than: ", self.thres_humid_low_than)
+        print(f"{current_time}"+ " " +f"Range threshold set is Co2 range: {co2_range_str} Temp range: {temp_range_str} Humid range: {humid_range_str}")
         if is_func == "cmd":
             print(f"{current_time} srtv: {action['srtv']} cv: {action['cv']} supply: {action['supply']}")
         elif is_func == "logic":
             action_str = ", ".join(action)
-            co2_range_str = f"{self.set_range_val_co2.start}-{self.set_range_val_co2.stop-1}"
-            temp_range_str = f"{self.set_range_val_temp.start}-{self.set_range_val_temp.stop-1}"
-            humid_range_str = f"{self.set_range_val_humid.start}-{self.set_range_val_humid.stop-1}"
-            print(f"Range threshold set is Co2 range: {co2_range_str} Temp range: {temp_range_str} Humid range: {humid_range_str}")
             print(f"{current_time} {action_str}")
 
     def __func_range_value_data(self):
