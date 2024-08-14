@@ -38,9 +38,6 @@ import time
 
 class WellBreath:
     def __init__(self, 
-            temp, 
-            humid, 
-            co2,
             debug=False,  # default logging is False // not show log
             thres_co2_mor_than=1000,
             thres_co2_low_than=750,
@@ -57,10 +54,7 @@ class WellBreath:
             set_range_val_temp=range(-50, 101),  # range type -50-100 °C
             set_range_val_humid=range(0, 101)  # range type 0 - 100 %RH
         ):
-        
-        self.temp = temp["sc_indoor"]
-        self.humid = humid["sc_indoor"]
-        self.co2 = co2["sc_indoor"]
+
         self.debug = debug
         self.thres_co2_mor_than = thres_co2_mor_than
         self.thres_co2_low_than = thres_co2_low_than
@@ -77,19 +71,19 @@ class WellBreath:
         self.set_range_val_temp = set_range_val_temp
         self.set_range_val_humid = set_range_val_humid
 
-    def func_wellbreath(self):
-        if self.__func_range_value_data():
+    def func_wellbreath(self, temp, humid, co2):
+        if self.__func_range_value_data(temp=temp["sc_indoor"], humid=humid["sc_indoor"], co2=co2["sc_indoor"]):
             return self.__create_response(0.0, 0.0, 0.0, False, "Range temp, humid, or CO2 is out of threshold.")
         
-        if self.co2 >= self.thres_co2_mor_than:
-            if self.temp < self.thres_temp_mor_than and self.humid < self.thres_humid_mor_than:
+        if co2["sc_indoor"] >= self.thres_co2_mor_than:
+            if temp["sc_indoor"] < self.thres_temp_mor_than and humid["sc_indoor"] < self.thres_humid_mor_than:
                 return self.__execute_command(True, [self.set_exhaust_name, self.set_supply_low_name])
             else:
                 return self.__execute_command(True, [self.set_exhaust_name, self.set_supply_high_name])
-        elif self.co2 < self.thres_co2_low_than:
-            if self.temp >= self.thres_temp_mor_than or self.humid >= self.thres_humid_low_than:
+        elif co2["sc_indoor"] < self.thres_co2_low_than:
+            if temp["sc_indoor"] >= self.thres_temp_mor_than or humid["sc_indoor"] >= self.thres_humid_low_than:
                 return self.__execute_command(True, [self.set_exhaust_name, self.set_supply_high_name])
-            elif self.temp < self.thres_temp_lower_than and self.humid < self.thres_humid_low_than:
+            elif temp["sc_indoor"] < self.thres_temp_lower_than and humid["sc_indoor"] < self.thres_humid_low_than:
                 return self.__execute_command(False, [])
         
         return self.__create_response(0.0, 0.0, 0.0, True, None)
@@ -136,5 +130,5 @@ class WellBreath:
             action_str = ", ".join(action)
             print(f"{current_time} {action_str}")
 
-    def __func_range_value_data(self):
-        return not (self.temp in self.set_range_val_temp and self.co2 in self.set_range_val_co2 and self.humid in self.set_range_val_humid)
+    def __func_range_value_data(self,temp, humid, co2):
+        return not (temp in self.set_range_val_temp and co2 in self.set_range_val_co2 and humid in self.set_range_val_humid)
