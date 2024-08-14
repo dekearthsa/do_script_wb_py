@@ -1,4 +1,5 @@
 import time
+
 ## python 3.8.5 version  ##
 
 ## {
@@ -32,23 +33,27 @@ import time
 ## cv Dtype float
 ## supply Dtype float
 
+
 class WellBreath:
     def __init__(self, 
             temp, 
             humid, 
             co2,
-            debug = False, ## default logging is False // not show log
-            thres_co2_mor_than = 1000,
-            thres_co2_low_than = 750,
-            thres_temp_mor_than = 35,
-            thres_temp_lower_than = 30,
-            thres_humid_mor_than = 75,
-            thres_humid_low_than = 70,
-            set_exhaust_name = "exhaust_fan", ## set exhaust name 
-            set_supply_low_name = "supply_low", ## set supply fan low name 
-            set_supply_high_name = "supply_high", ## set supply fan high name
-            set_channel_cv_supply_low = 33, ## using channel 1 as supply low 
-            set_channel_cv_supply_high = 66 ## using channel 2 as supply high
+            debug=False,  # default logging is False // not show log
+            thres_co2_mor_than=1000,
+            thres_co2_low_than=750,
+            thres_temp_mor_than=35,
+            thres_temp_lower_than=30,
+            thres_humid_mor_than=75,
+            thres_humid_low_than=70,
+            set_exhaust_name="exhaust_fan",  # set exhaust name 
+            set_supply_low_name="supply_low",  # set supply fan low name 
+            set_supply_high_name="supply_high",  # set supply fan high name
+            set_channel_cv_supply_low=33,  # using channel 1 as supply low 
+            set_channel_cv_supply_high=66,  # using channel 2 as supply high
+            set_range_val_co2=range(0, 5001),  # range type 0-5000 ppm
+            set_range_val_temp=range(-50, 101),  # range type -50-100 °C
+            set_range_val_humid=range(0, 101)  # range type 0 - 100 %RH
         ):
         
         self.temp = temp
@@ -66,56 +71,63 @@ class WellBreath:
         self.set_supply_high_name = set_supply_high_name
         self.set_channel_cv_supply_low = set_channel_cv_supply_low
         self.set_channel_cv_supply_high = set_channel_cv_supply_high
+        self.set_range_val_co2 = set_range_val_co2
+        self.set_range_val_temp = set_range_val_temp
+        self.set_range_val_humid = set_range_val_humid
 
     def func_wellbreath(self):
-        self.__func_logging(is_func="logic", action=["temp: "+ str(self.temp), "humid: "+ str(self.humid), "co2: "+ str(self.co2)])
-        if self.co2 >= self.thres_co2_mor_than and self.temp < self.thres_temp_mor_than and self.humid < self.thres_humid_mor_than:
-            command = self.__func_create_command(state_off_on=True, array_command=[self.set_exhaust_name, self.thres_temp_lower_than])
-            self.__func_logging(is_func="cmd", action=command)
-            return command["srtv"], command["cv"], command["supply"]
-        elif self.co2 >= self.thres_co2_mor_than and (self.temp >= self.thres_temp_mor_than or self.humid >= self.thres_humid_mor_than):
-            command = self.__func_create_command(state_off_on=True,array_command= [self.set_exhaust_name, self.set_supply_high_name])
-            self.__func_logging(is_func="cmd", action=command)
-            return command["srtv"], command["cv"], command["supply"]
-        elif self.co2 < self.thres_co2_low_than and (self.temp >= self.thres_temp_mor_than or self.humid >= self.thres_humid_low_than):
-            command = self.__func_create_command(state_off_on=True,array_command= [self.set_exhaust_name, self.set_supply_high_name])
-            self.__func_logging(is_func="cmd", action=command)
-            return command["srtv"], command["cv"], command["supply"]
-        elif self.co2 < self.thres_co2_low_than and self.temp < self.thres_temp_lower_than and self.humid < self.thres_humid_low_than:
-            command = self.__func_create_command(state_off_on=False, array_command=[])
-            self.__func_logging(is_func="cmd", action=command)
-            return command["srtv"], command["cv"], command["supply"]
+        if self.__func_range_value_data():
+            return self.__create_response(0.0, 0.0, 0.0, False, "Range temp, humid, or CO2 is out of threshold.")
+        
+        if self.co2 >= self.thres_co2_mor_than:
+            if self.temp < self.thres_temp_mor_than and self.humid < self.thres_humid_mor_than:
+                return self.__execute_command(True, [self.set_exhaust_name, self.set_supply_low_name])
+            else:
+                return self.__execute_command(True, [self.set_exhaust_name, self.set_supply_high_name])
+        elif self.co2 < self.thres_co2_low_than:
+            if self.temp >= self.thres_temp_mor_than or self.humid >= self.thres_humid_low_than:
+                return self.__execute_command(True, [self.set_exhaust_name, self.set_supply_high_name])
+            elif self.temp < self.thres_temp_lower_than and self.humid < self.thres_humid_low_than:
+                return self.__execute_command(False, [])
+        
+        return self.__create_response(0.0, 0.0, 0.0, True, None)
+    
+    def __execute_command(self, state_on, array_command):
+        command = self.__func_create_command(state_on, array_command)
+        self.__func_logging(is_func="cmd", action=command)
+        return self.__create_response(command["srtv"], command["cv"], command["supply"], True, None)
+    
+    def __create_response(self, srtv, cv, supply, status, err_desc):
+        return {
+            "srtv": srtv,
+            "cv": cv,
+            "supply": supply,
+            "status": status,
+            "err_desc": err_desc
+        }
 
-    def __func_create_command(self,state_off_on, array_command):
-        if state_off_on:
-            if self.set_exhaust_name in array_command and self.set_supply_low_name in array_command:
-                return {
-                    "srtv":float(0), # default 
-                    "cv": float(1), # exhaust fan
-                    "supply": float(self.set_channel_cv_supply_low), # supply fan
-            
-                }
-            elif self.set_exhaust_name in array_command and self.set_supply_high_name in array_command:
-                return {
-                    "srtv":float(0), # default 
-                    "cv": float(1), # exhaust fan
-                    "supply": float(self.set_channel_cv_supply_high), # supply fan
-                }
-        else:
-            return {
-                    "srtv": float(0), # default 
-                    "cv": float(0), # exhaust fan
-                    "supply": float(0), # supply fan
-                }
+    def __func_create_command(self, state_on, array_command):
+        if state_on:
+            if self.set_exhaust_name in array_command:
+                supply_value = self.set_channel_cv_supply_low if self.set_supply_low_name in array_command else self.set_channel_cv_supply_high
+                return {"srtv": 0.0, "cv": 1.0, "supply": float(supply_value)}
+        return {"srtv": 0.0, "cv": 0.0, "supply": 0.0}
+
+    def __func_logging(self, is_func, action):
+        if not self.debug:
+            return
         
-    def __func_logging(self, is_func ,action):
-        if self.debug:
-            current_time = time.time()
-            local_time = time.localtime(current_time)
-            formatted_time = time.strftime("%d/%m/%Y %H:%M:%S", local_time)
+        current_time = time.strftime("%d/%m/%Y %H:%M:%S", time.localtime())
         
-            if is_func == "cmd":
-                print(formatted_time + " " + "srtv: " + str(action["srtv"]) + " cv: " + str(action["cv"]) + " supply: " + str(action["supply"]))
-            elif is_func == "logic":
-                action_str = ", ".join(action)
-                print(formatted_time + " " + action_str)
+        if is_func == "cmd":
+            print(f"{current_time} srtv: {action['srtv']} cv: {action['cv']} supply: {action['supply']}")
+        elif is_func == "logic":
+            action_str = ", ".join(action)
+            co2_range_str = f"{self.set_range_val_co2.start}-{self.set_range_val_co2.stop-1}"
+            temp_range_str = f"{self.set_range_val_temp.start}-{self.set_range_val_temp.stop-1}"
+            humid_range_str = f"{self.set_range_val_humid.start}-{self.set_range_val_humid.stop-1}"
+            print(f"Range threshold set is Co2 range: {co2_range_str} Temp range: {temp_range_str} Humid range: {humid_range_str}")
+            print(f"{current_time} {action_str}")
+
+    def __func_range_value_data(self):
+        return not (self.temp in self.set_range_val_temp and self.co2 in self.set_range_val_co2 and self.humid in self.set_range_val_humid)
