@@ -97,19 +97,3 @@ class WellBreath:
             elif is_func == "logic":
                 action_str = ", ".join(action)
                 print(formatted_time + " " + action_str)
-
-
-
-# example = WellBreath(
-#     temp=55,
-#     humid=55,
-#     co2=400, 
-#     debug=True ## Close debug using False 
-#     )
-
-
-# t, h, c = example.func_wellbreath()
-
-# print(t)
-# print(h)
-# print(c)
