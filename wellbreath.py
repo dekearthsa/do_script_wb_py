@@ -77,20 +77,28 @@ class WellBreath:
                 }
         
     def __func_logging(self, is_func ,action):
-        if self.debug == True:
-            if is_func =="cmd":
-                current_time = time.time()
-                formatted_time = time.strftime("%d/%m/%Y %H:%M:%S", current_time)
-                print(formatted_time + "strv: " + str(action["strv"]) +"cv: " + str(action["cv"]),"supply: " +  str(action["supply"]))
+        if self.debug:
+            current_time = time.time()
+            local_time = time.localtime(current_time)
+            formatted_time = time.strftime("%d/%m/%Y %H:%M:%S", local_time)
+        
+            if is_func == "cmd":
+                print(formatted_time + " " + "srtv: " + str(action["srtv"]) + " cv: " + str(action["cv"]) + " supply: " + str(action["supply"]))
             elif is_func == "logic":
-                current_time = time.time()
-                formatted_time = time.strftime("%d/%m/%Y %H:%M:%S", current_time)
-                print(formatted_time)
-                print(action)
-            
+                # Convert list to a string using join or simply use str()
+                action_str = ", ".join(action)
+                print(formatted_time + " " + action_str)
 
 
-example = WellBreath(temp=55,humid=55,co2=400, debug=True)
+
+example = WellBreath(
+    temp=55,
+    humid=55,
+    co2=400, 
+    debug=True ## Close debug using False 
+    )
+
+
 t, h, c = example.func_wellbreath()
 
 print(t)
