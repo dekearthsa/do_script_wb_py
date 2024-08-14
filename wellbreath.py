@@ -32,6 +32,8 @@ import time
 ## srtv Dtype float
 ## cv Dtype float
 ## supply Dtype float
+## status Dtype bool (status operate logic if fail it will return False otherwise is True )
+## err_desc Dtype string (show description of fail operation in logic if nothing fail will return none)
 
 
 class WellBreath:
