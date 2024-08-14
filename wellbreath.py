@@ -1,14 +1,36 @@
 import time
+## python 3.8.5 version  ##
 
-# {
-#     srtv: 0 # default 
-#     cv: 0 # exhaust off 
-#     cv: 1 # exhaust on
-#     supply: 33 # ch 1   # use as low 
-#     supply: 66 # ch 2   # use as high
-#     supply: 100 # ch 3
-# }
+## {
+##     srtv: 0 # default 
+##     cv: 0 # exhaust off 
+##     cv: 1 # exhaust on
+##     supply: 33 # ch 1   # use as low 
+##     supply: 66 # ch 2   # use as high
+##     supply: 100 # ch 3
+## }
 
+## Parameter ## 
+## temp (data temp from outside this function)
+## humid (data humid from outside this function)
+## co2 (data co2 from outside this function)
+## debug (default is False to show log change it to True)
+## thres_co2_mor_than (thres_co2_mor_than is threshold of Co2 when higher than... default is 1000)
+## thres_co2_low_than (thres_co2_low_than is threshold of Co2 when lower than... default is 750)
+## thres_temp_mor_than (thres_temp_mor_than is threshold of temp when higher than... default is 35)
+## thres_temp_lower_than (thres_temp_lower_than is threshold of temp when lower than... default is 30)
+## thres_humid_mor_than (thres_humid_mor_than is threshold of humid when higher than...  default is 75)
+## thres_humid_low_than (thres_humid_low_than is threshold of humid when lower than...  default is 70)
+## set_exhaust_name (set_exhaust_name is action command name of exhaust fan default is exhaust_fan)
+## set_supply_low_name (set_supply_low_name is action command name of supply fan low speed default is supply_low)
+## set_supply_high_name (set_supply_high_name is action command name of supply fan high speed default is supply_high)
+## set_channel_cv_supply_low (set_channel_cv_supply_low  is channel of supply fan low speed  default is 33)
+## set_channel_cv_supply_high (set_channel_cv_supply_high is channel of supply fan high speed default default is 66)
+
+## Output data is ##
+## srtv Dtype float
+## cv Dtype float
+## supply Dtype float
 
 class WellBreath:
     def __init__(self, 
