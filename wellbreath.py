@@ -91,16 +91,18 @@ class WellBreath:
     def __execute_command(self, state_on, array_command):
         command = self.__func_create_command(state_on, array_command)
         self.__func_logging(is_func="cmd", action=command)
-        return self.__create_response(command["srtv"], command["cv"], command["supply"], True, None)
+        return self.__create_response(command["srtv"], command["cv"], command["supply"])
     
-    def __create_response(self, srtv, cv, supply, status, err_desc):
-        return {
-            "srtv": srtv,
-            "cv": cv,
-            "supply": supply,
-            "status": status,
-            "err_desc": err_desc
-        }
+    def __create_response(self, srtv, cv, supply):
+        # return {
+        #     "srtv": srtv,
+        #     "cv": cv,
+        #     "supply": supply,
+        #     "status": status,
+        #     "err_desc": err_desc
+        # }
+    
+        return(float(srtv), float(cv), float(supply))
 
     def __func_create_command(self, state_on, array_command):
         if state_on:
