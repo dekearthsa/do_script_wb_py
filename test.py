@@ -10,17 +10,17 @@ import wellbreath
 ## }
 
 demo_temp =  {
-    "sc_indoor": 20,
+    "sc_indoor": 21.1,
     "sc_outdoor": 10,
     "sc_attic": 10
 }
 demo_humid = {
-    "sc_indoor": 10,
+    "sc_indoor": 11.4,
     "sc_outdoor": 10,
     "sc_attic": 10
 }
 demo_co2 =   {
-    "sc_indoor": 100,
+    "sc_indoor": 2440.1,
     "sc_outdoor": 10,
     "sc_attic": 10
 }

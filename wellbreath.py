@@ -35,10 +35,12 @@ import time
 ## status Dtype bool (status operate logic if fail it will return False otherwise is True )
 ## err_desc Dtype string (show description of fail operation in logic if nothing fail will return none)
 
+decimal_point=10
 
 class WellBreath:
     def __init__(self, 
             debug=False,  # default logging is False // not show log
+            
             thres_co2_mor_than=1000,
             thres_co2_low_than=750,
             thres_temp_mor_than=35,
@@ -50,11 +52,11 @@ class WellBreath:
             set_supply_high_name="supply_high",  # set supply fan high name
             set_channel_cv_supply_low=33,  # using channel 1 as supply low 
             set_channel_cv_supply_high=66,  # using channel 2 as supply high
-            set_range_val_co2=range(0, 5001),  # range type 0-5000 ppm
-            set_range_val_temp=range(-50, 101),  # range type -50-100 °C
-            set_range_val_humid=range(0, 101)  # range type 0 - 100 %RH
+            set_range_val_co2=range(0*decimal_point, 5001*decimal_point),  # range type 0-5000 ppm
+            set_range_val_temp=range(-50*decimal_point, 101*decimal_point),  # range type -50-100 °C
+            set_range_val_humid=range(0*decimal_point, 101*decimal_point)  # range type 0 - 100 %RH
         ):
-
+        self.decimal_point = decimal_point
         self.debug = debug
         self.thres_co2_mor_than = thres_co2_mor_than
         self.thres_co2_low_than = thres_co2_low_than
@@ -115,9 +117,9 @@ class WellBreath:
         if not self.debug:
             return
         
-        co2_range_str = f"{self.set_range_val_co2.start}-{self.set_range_val_co2.stop-1}"
-        temp_range_str = f"{self.set_range_val_temp.start}-{self.set_range_val_temp.stop-1}"
-        humid_range_str = f"{self.set_range_val_humid.start}-{self.set_range_val_humid.stop-1}"    
+        co2_range_str = f"{(self.set_range_val_co2.start)/decimal_point}-{((self.set_range_val_co2.stop)/decimal_point) -1}"
+        temp_range_str = f"{(self.set_range_val_temp.start/decimal_point)}-{((self.set_range_val_temp.stop)/decimal_point)-1}"
+        humid_range_str = f"{(self.set_range_val_humid.start)/decimal_point}-{((self.set_range_val_humid.stop)/decimal_point)-1}"    
         current_time = time.strftime("%d/%m/%Y %H:%M:%S", time.localtime())
         print(current_time + " " +"Theshold co2 more than: ", self.thres_co2_mor_than)
         print(current_time + " " +"Theshold co2 lower than: ", self.thres_co2_low_than)
@@ -133,4 +135,12 @@ class WellBreath:
             print(f"{current_time} {action_str}")
 
     def __func_range_value_data(self,temp, humid, co2):
-        return not (temp in self.set_range_val_temp and co2 in self.set_range_val_co2 and humid in self.set_range_val_humid)
+        print("temp => ", int(temp))
+        print("co2 => ", int(co2))
+        print("humid => ", int(humid))
+        return not ((temp * decimal_point)  in self.set_range_val_temp and (co2 * decimal_point) in self.set_range_val_co2 and (humid * decimal_point) in self.set_range_val_humid)
+    
+    # def __float_range(start, stop, step):
+    #     while start < stop:
+    #         yield round(start, 10) 
+    #         start += step
